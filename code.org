@@ -1,0 +1,83 @@
+#+TITLE: Extended Essay Code
+* Encoder
+#+BEGIN_SRC python
+import os
+class Encoder(object):
+#+END_SRC
+** jpeg()
+#+BEGIN_SRC python
+  def jpeg(image, compression):
+      pass
+#+END_SRC
+** bpg()
+#+BEGIN_SRC python
+  def bpg(image, compression):
+      compression *= 0.51
+      os.system(f"bpgenc -q {compression} {image}.JPEG -o {image}_{compression}.bpg")
+#+END_SRC
+** jpegxr()
+#+BEGIN_SRC python
+  def jpegxr(image, compression):
+      compression *= 0.01
+      os.system(f"magick convert -compress none {image}.JPEG {image}.tiff")
+      os.system(f"JxrEncApp -i {image}.tiff -o {image}_{compression}.jxr -q {compression}")
+#+END_SRC
+** heif()
+#+BEGIN_SRC python
+  def heif(image, compression):
+      compression *= 1
+      os.system(f"heif-enc -q {compression} {image}.JPEG -o {image}_{compression}.heif")
+#+END_SRC
+** webp()
+#+BEGIN_SRC python
+  def webp(image, compression):
+      compression *= 1
+      os.system(f"cwebp -q {compression} {image}.JPEG -o {image}_{compression}.webp")
+#+END_SRC
+* Metrics
+#+BEGIN_SRC python
+import os
+from wand.image import Image
+class Metric(object):
+#+END_SRC
+** cr()
+#+BEGIN_SRC python
+  def cr(imageA, imageB):
+      a = os.path.getsize(imageA)
+      b = os.path.getsize(imageB)
+      return a/b
+#+END_SRC
+** mse()
+#+BEGIN_SRC python
+  def mse(imageA, imageB, write_result=False):
+      with Image(filename=imageA) as a:
+          with Image(filename=imageB) as b:
+              result_image, result_metric = a.compare(b, metric="mean_squared")
+              if write_result == True:
+                  with result_image:
+                      result_image.save(filename='diff.JPEG')
+      return result_metric
+#+END_SRC
+** psnr()
+#+BEGIN_SRC python
+  def psnr(imageA, imageB, write_result=False):
+       with Image(filename=imageA) as a:
+           with Image(filename=imageB) as b:
+               result_image, result_metric = a.compare(b, metric="peak_signal_to_noise_ratio")
+               if write_result == True:
+                   with result_image:
+                       result_image.save(filename='diff.JPEG')
+       return result_metric
+#+END_SRC
+** ssim()
+#+BEGIN_SRC python
+  def ssim(imageA, imageB, write_result=False):
+       with Image(filename=imageA) as a:
+           with Image(filename=imageB) as b:
+               result_image, result_metric = a.compare(b, metric="structural_similairity")
+               if write_result == True:
+                   with result_image:
+                       result_image.save(filename='diff.JPEG')
+       return result_metric
+#+END_SRC
+
